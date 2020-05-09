@@ -1,0 +1,99 @@
+<html>
+    <head>
+    </head>
+    <body>
+        <style>
+            #dialogoverlay{
+                display: none;
+                opacity: 0.8;
+                position: fixed;
+                top: 0px;
+                left: 0px;
+                background-color: black;
+                width: 100%;
+                z-index: 10;
+            }
+            #dialogbox{
+                display:none;
+                position: fixed;
+                background: white;
+                border-radius: 7px;
+                z-index: 10;
+                width: 550px;
+            }
+            #dialogbox > div{background-color: black; margin: 8px;}
+            #dialogboxhead {background-color: darkgray;padding: 10px; font-size: 19px; color:dimgray; }
+            #dialogboxbody {background-color: darkgray;padding: 20px; color:dimgray; }
+            #dialogboxfoot {background-color: darkgray;padding: 10px; text-align: right; }
+        </style>
+        <div id='dialogoverlay'></div>
+        <div id='dialogbox'>
+            <div>
+                <div id='dialogboxhead'></div>
+                <div id='dialogboxbody'></div>
+                <div id='dialogboxfoot'></div>
+            </div>
+        </div>
+        <button onclick="Alert.render()">Alert Button</button>
+        <script src="room_booking.js"></script>
+
+
+        <form action="rooms.php" method="POST">
+            <div><label>Name</label><input type="text"></div>
+            <div><label>Email</label><input type="email"></div>
+            <div><label>Telephone</label><input type="tel" pattern="0[0-9]{9}"></div>
+            <div><input type="submit" value="Confirm Booking"><input type="button" value="Cancel"></div>
+        </form>
+
+    </body>
+</html>
+
+
+var checkIn = document.getElementById('in_date').value;
+    var checkOut = document.getElementById('out_date').value;
+    var room_type = document.getElementById('normal').value;
+    async function getAvailableArray() {
+        const booked = db.collection('room-details').where('check-out','<',checkIn).where('booked','==',true).where('type','==',room_type).get();
+        const notBooked = db.collection('room-details').where('booked','==',false).where('type','==',room_type).get();
+
+        const [bookedQuerySnapshot, notBookedQuerySnapshot] = await Promise.all([
+            booked,
+            notBooked
+        ]);
+
+        const bookedArray = bookedQuerySnapshot.docs;
+        const notBookedArray = notBookedQuerySnapshot.docs;
+ 
+        const availableArray = bookedArray.concat(notBookedArray);
+
+        return availableArray;
+      }
+
+      arrayAvailable.then( result => {
+      result.forEach(docSnapshot => {
+
+
+        <?php
+        $checkIn = $_POST["check-in"];
+        $checkOut = $_POST["check-out"];
+        $room_type = $_POST["room_type"];
+        $double = $_POST["double"];
+        $single = $_POST["single"];
+        $package = $_POST["package"];
+
+        $d_rooms = array();
+        $s_rooms = array();
+
+        $documents = $db->collection('cities')->where('type','==',$room_type)->orderBy('booked')->documents();
+        foreach($documents as $document){
+
+                if(($checkIn > $document->data()->booked_till) and ($document->data()->bed =='Double') and ($double != count($d_rooms)){
+                    array_push($d_rooms,($document->data()->id));
+                }
+                elseif(($checkIn > $document->data()->booked_till) and ($document->data()->bed =='Single') and ($single != count($s_rooms)){
+                    array_push($s_rooms,($document->data()->id));
+                }else{
+                    continue;
+                }
+        }
+    ?>
