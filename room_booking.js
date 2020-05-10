@@ -1,4 +1,4 @@
-var formCreator = '<form action="rooms.php" method="POST" name="book_form" onsubmit="return confirmBooking();"><div><label>Name</label><input type="text" name="name" required></div<div><label>Email</label><input type="email" name="email" required></div><div><label>Telephone</label><input type="tel" name="tel" pattern="0[0-9]{9}" required></div><div><div><button type="submit" >Confirm</button></div><div> <button onclick="Alert.okCancel()">Cancel</button></div></div></form>';
+var formCreator = '<form action="rooms.php" method="POST" name="book_form" onsubmit="return confirmBooking();"><div><label>Name</label><input type="text" name="name" required></div<div><label>Email</label><input type="email" name="email" required></div><div><label>Telephone</label><input type="tel" name="tel" pattern="0[0-9]{9}" required></div><div><div><button type="submit" >Confirm</button></div><div> <button type="button" onclick="Alert.okCancel()">Cancel</button></div></div></form>';
 var unavailability_msg = 'Sorry...We are unable to cater your booking at the moment due to unavailability of rooms';
 var availability_msg = 'Your rooms are available..You can proceed and confirm the booking'; 
 var ok_html = '<div><button onclick="Alert.okCancel()">OK</button></div>';
@@ -46,6 +46,14 @@ function customAlert(){
         console.log(d_rooms);
         console.log(s_rooms);
     }
+}
+
+function closeForm(){
+  document.getElementById('dialogbox').style.display = "none";
+  document.getElementById('dialogoverlay').style.display = "none";
+  document.getElementById('check_form').reset();
+  d_rooms = [];
+  s_rooms = [];
 }
 
 var Alert = new customAlert();
@@ -101,16 +109,55 @@ function confirmBooking(){
   var telephone = document.forms["book_form"]["tel"].value;
   var checkIn = document.forms["check_form"]["check-in"].value;
   var checkOut = document.forms["check_form"]["check-out"].value;
+  
+  var rooms = "";
+  if ((d_rooms.length==0) && (s_rooms.length!=0)){
+    rooms = s_rooms.join()
+  }
+  if ((d_rooms.length!=0) && (s_rooms.length==0)){
+    rooms = d_rooms.join()
+  }
+  if ((d_rooms.length!=0) && (s_rooms.length!=0)){
+    rooms = d_rooms.join()+" ,"+s_rooms.join()
+  }
+  
   db.collection("room-bookings").add({
     name:name,
     email:email,
     telephone:telephone,
     check_in:checkIn,
     check_out:checkOut,
-    rooms:d_rooms.join()+" ,"+s_rooms.join(),
+    rooms:rooms,
     package:document.forms["check_form"]["package"].value
   })
 
+  if (d_rooms.length!=0){
+    var d;
+    for (d of d_rooms) {
+      db.collection('room-details').where('id','==',d).get().then((snapshot)=>{
+        snapshot.docs.forEach(doc =>{ 
+          db.collection('room-details').doc(doc.id).update({
+            booked: true,
+            booked_till: checkOut 
+          })
+        })
+      })
+    }
+  }
+  if (s_rooms.length!=0){
+    var s;
+    for (s of s_rooms) {
+      db.collection('room-details').where('id','==',s).get().then((snapshot)=>{
+        snapshot.docs.forEach(doc =>{ 
+          db.collection('room-details').doc(doc.id).update({
+            booked: true,
+            booked_till: checkOut 
+          })
+        })
+      })
+    }
+  }
+  
   function sendMail(msg_body) {
     Email.send({
     Host: "smtp.gmail.com",
@@ -121,14 +168,16 @@ function confirmBooking(){
     Subject : "Booking Confirmation",
     Body : msg_body,
     }).then(
-      message => alert("mail sent successfully")
+      Alert.render(mail_html,ok_html)
     );
   }
 
   var double = "Double-Bed Rooms : "+d_rooms.join();
   var single = "Single-Bed Rooms : "+s_rooms.join();
   var msg_body = "The following rooms have been booked \nfor you from "+checkIn+" to "+checkOut+" \n" +double+" \n"+single;
+  
   sendMail(msg_body);
-return false;
+
+  return false;
 }
       
