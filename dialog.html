@@ -97,3 +97,95 @@ var checkIn = document.getElementById('in_date').value;
                 }
         }
     ?>
+
+
+    query.then((snapshot)=>{
+        snapshot.docs.forEach(doc => {
+            if(checkIn > doc.data().booked_till){
+                if((doc.data().bed =='Double') && (double != d_rooms.length)){
+                  var d = doc.data().id.toString();
+                  d_rooms.push(d);
+                }
+                if((doc.data().bed =='Single') && (single != s_rooms.length)){
+                  var s = doc.data().id.toString();
+                  s_rooms.push(s);
+               }
+            }  
+        })
+      });
+
+
+      <?php
+      $checkIn = $_POST["check-in"];
+      $checkOut = $_POST["check-out"];
+      $room_type = $_POST["room_type"];
+      $double = $_POST["double"];
+      $single = $_POST["single"];
+      $package = $_POST["package"];
+
+      $d_rooms = array();
+      $s_rooms = array();
+
+      $documents = $db->collection('cities')->where('type','==',$room_type)->orderBy('booked')->documents();
+      foreach($documents as $document){
+          if($checkIn > $document->data()->booked_till){
+              if(($document->data()->bed =='Double') and ($double != count($d_rooms)){
+                  array_push($d_rooms,($document->data()->id))
+              }
+              elseif(($document->data()->bed =='Single') and ($single != count($s_rooms)){
+                  array_push($s_rooms,($document->data()->id))
+              }else{
+                  continue;
+              }
+          }else{
+              continue;
+          }
+      }
+      ?>
+
+      unction checkAvailability(){
+        var checkIn = document.forms["check_form"]["check-in"].value;
+        var checkOut = document.forms["check_form"]["check-out"].value;
+        var room_type = document.forms["check_form"]["room_type"].value;
+        var double = document.forms["check_form"]["double"].value;
+        var single = document.forms["check_form"]["single"].value;
+        var package = document.forms["check_form"]["package"].value;
+        console.log(double);
+        console.log(single);
+        var d_rooms = [];
+        var s_rooms = [];
+    
+        async function getData(){
+         var query = await db.collection('room-details').where('type','==',room_type).orderBy('booked').get();
+         return query;
+        }
+        var query = getData();
+         query.then((snapshot)=>{
+          var snaps = snapshot.docs;
+          for(doc of snaps){
+              if(checkIn > doc.data().booked_till){
+                  if((doc.data().bed =='Double') && (double != d_rooms.length)){
+                    var d = doc.data().id.toString();
+                    d_rooms.push(d);
+                  }
+                  if((doc.data().bed =='Single') && (single != s_rooms.length)){
+                    var s = doc.data().id.toString();
+                    s_rooms.push(s);
+                 }
+              }  
+          }
+        });
+    
+      
+        console.log(d_rooms);
+        console.log(d_rooms.length);
+        console.log(s_rooms);
+        console.log(s_rooms.length);
+        if((d_rooms.length == double) && (s_rooms.length == single)){
+          Alert.render(availability_msg);
+        }else{
+          Alert.render(unavailability_msg);
+        }
+    
+        return false;
+      }
