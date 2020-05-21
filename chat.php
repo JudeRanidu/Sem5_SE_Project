@@ -6,6 +6,7 @@
   <?php
   include('header.html');
   ?>
+ <!-- 
 <div id="webchat"/>
 <script src="https://storage.googleapis.com/mrbot-cdn/webchat-latest.js"></script>
 // Or you can replace latest with a specific version
@@ -22,6 +23,21 @@
     connectingText: "Waiting for server...",
     fullScreenMode: true,
     showFullScreenButton: true,
+  })
+</script>
+-->
+<div id="webchat"/>
+<script src="https://storage.googleapis.com/mrbot-cdn/webchat-latest.js"></script>
+// Or you can replace latest with a specific version
+<script>
+  WebChat.default.init({
+    selector: "#webchat",
+    initPayload: "/get_started",
+    customData: {"language": "en"}, // arbitrary custom data. Stay minimal as this will be added to the socket
+    socketUrl: "http://localhost:5005",
+    socketPath: "/socket.io/",
+    title: "Pearl Chat Assistant",
+    subtitle: "Powered by Rasa",
   })
 </script>
 <!--

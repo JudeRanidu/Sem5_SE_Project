@@ -12,7 +12,7 @@ function renderRoom(doc){
     roomBox.setAttribute('class','room_box');
     detBox.setAttribute('class','det_box');
     name.textContent = doc.data().type;
-    para.textContent = "Rs. "+doc.data().price+" per night";
+    para.innerHTML = "<span style='color:white; padding-left:5px; padding-right:10px;'>Full-Board</span>Rs."+doc.data().price_f+"/night</br><span style='color:white; padding-left:5px; padding-right:10px;'>Half-Board</span>Rs."+doc.data().price_h+"/night</br><span style='color:white; padding-left:5px; padding-right:10px;'>Breakfast-Only</span>Rs."+doc.data().price_b+"/night";
 
     detBox.appendChild(name);
     detBox.appendChild(para);

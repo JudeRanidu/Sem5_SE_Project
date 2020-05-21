@@ -57,10 +57,11 @@ div.img_grid {
     border-color: black;
 }
 .det_box{
+    text-align: center;
     background-color: black;
     color: slategrey;
     width: 35%;
-    height: 100px;
+    height: fit-content;
     float: left;
 }
 
