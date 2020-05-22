@@ -4,11 +4,20 @@
     <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-analytics.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-firestore.js"></script>
     <link rel="stylesheet" href="styles.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
-<?php
-include('header.html');
-?>
+<header id="header">
+        <div id="nav" class="topnav">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="restaurant.html">Restaurant</a></li>
+                <li><a href="rooms.html">Rooms</a></li>
+                <li><a href="chat.html">Chat with us</a></li>
+                <li><a href="reviews.html">Reviews</a></li>
+            </ul>
+        </div>
+    </header>
 <div id="menu_grid" class="menuGrid"> </div>
 
 <script>
@@ -33,8 +42,12 @@ include('header.html');
 </div>
 
 <script src="restaurant.js"></script>
-<?php
-include('footer.html');
-?>
+<footer>
+    <div class="footbar">
+      <a><i class="fa fa-fw fa-home"></i> No.26, Beach View Road, Hikkaduwa</a>
+      <a><i class="fa fa-fw fa-envelope"></i> hotelpearlmis@gmail.com</a>
+      <a><i class="fa fa-fw fa-phone"></i>+94112245789</a>
+    </div>
+    </footer>
 </body>
 </html>
