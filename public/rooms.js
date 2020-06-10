@@ -1,6 +1,6 @@
 const roomGrid = document.querySelector('#room_grid');
 
-
+//function to create the view of one room type
 function renderRoom(doc){
     var photo = document.createElement('img');
     let name = document.createElement('h3');
@@ -22,8 +22,10 @@ function renderRoom(doc){
     roomGrid.appendChild(roomBox);
 
 }
-    db.collection('rooms').get().then((snapshot)=>{
-        snapshot.docs.forEach(doc => {
-            renderRoom(doc);
-        })
-    });
+
+//accessing database to get room details
+db.collection('rooms').get().then((snapshot)=>{
+    snapshot.docs.forEach(doc => {
+        renderRoom(doc);
+    })
+});

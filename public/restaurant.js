@@ -1,7 +1,7 @@
 const menuGrid = document.querySelector('#menu_grid');
 const menuNav = document.querySelector('#menunav');
 
-
+//function to render the column view of one food category
 function renderMenu(doc){
     let photo = document.createElement('img');
     let para = document.createElement('div');
@@ -21,13 +21,14 @@ function renderMenu(doc){
     menuGrid.appendChild(categoryBox);
 }
 
+//access databse to get the food categories and display the view
 db.collection('main-menu').get().then((snapshot)=>{
     snapshot.docs.forEach(doc => {
         renderMenu(doc);
     })
 });
 
-
+//function to render the sliding side panel which contains food items of the selected category
 function renderSubMenu(menuItem){
     var inmenunav = document.createElement('div');
     inmenunav.setAttribute('id','inMenuNav');

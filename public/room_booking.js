@@ -2,15 +2,15 @@ var formCreator = '<form action="rooms.php" method="POST" name="book_form" onsub
 var unavailability_msg = 'Sorry...We are unable to cater your booking at the moment due to unavailability of rooms';
 var availability_msg = 'Your rooms are available..You can proceed and confirm the booking'; 
 var ok_html = '<div><button onclick="Alert.okCancel()">OK</button></div>';
-//var confirm_html = '<div><button type="submit" onclick="confirmBooking()">Confirm</button></div><div> <button onclick="Alert.okCancel()">Cancel</button></div>';
 var proceed_html = '<div><button name="proceed_btn" onclick="Alert.render(formCreator,\' \')">Proceed</button></div>';
 var check_msg = 'Check-in and check-out dates do not match...No of rooms cannot be zero';
 var ok_1_html = '<div><button onclick="Alert.ok()">OK</button></div>';
 var mail_html = 'Your Booking is placed...Confirmaton email is sent to you';
 
-var d_rooms = [];
+var d_rooms = []; //two arrays to keep the ids of the selected available rooms
 var s_rooms = [];
 
+//function to create a modal type object to display messages to the user and get booking confirmation details
 function customAlert(){
     this.render = function(bodyString,footerString){
         var winH = window.innerHeight;
@@ -28,6 +28,7 @@ function customAlert(){
         document.getElementById('dialogboxbody').innerHTML = bodyString;
         document.getElementById('dialogboxfoot').innerHTML = footerString;
     }
+    //button with unavailability msg, cancel of booking and final ok button
     this.okCancel = function(){
       document.getElementById('dialogbox').style.display = "none";
       document.getElementById('dialogoverlay').style.display = "none";
@@ -37,7 +38,7 @@ function customAlert(){
       console.log(d_rooms);
       console.log(s_rooms);
   }
-
+    //buuton with dates error message
     this.ok = function(){
         document.getElementById('dialogbox').style.display = "none";
         document.getElementById('dialogoverlay').style.display = "none";
@@ -48,17 +49,17 @@ function customAlert(){
     }
 }
 
-function closeForm(){
+/*function closeForm(){
   document.getElementById('dialogbox').style.display = "none";
   document.getElementById('dialogoverlay').style.display = "none";
   document.getElementById('check_form').reset();
   d_rooms = [];
   s_rooms = [];
-}
+}*/
 
 var Alert = new customAlert();
 
-
+//funtion to check the availability of rooms based on the given input
 function checkAvailability(){
     var checkIn = document.forms["check_form"]["check-in"].value;
     var checkOut = document.forms["check_form"]["check-out"].value;
@@ -102,7 +103,7 @@ function checkAvailability(){
   }
   return false;
 }
-
+//funtion to get the details of the booking person and confirm the booking
 function confirmBooking(){
   var name = document.forms["book_form"]["name"].value;
   var email = document.forms["book_form"]["email"].value;
@@ -122,7 +123,7 @@ function confirmBooking(){
   if ((d_rooms.length!=0) && (s_rooms.length!=0)){
     rooms = d_rooms.join()+","+s_rooms.join()
   }
-  
+  //adding a new booking to  the database
   db.collection("room-bookings").add({
     name:name,
     email:email,
@@ -132,7 +133,7 @@ function confirmBooking(){
     rooms:rooms,
     package:package
   })
-
+  //updating the double bed rooms with booking details
   if (d_rooms.length!=0){
     var d;
     for (d of d_rooms) {
@@ -145,7 +146,7 @@ function confirmBooking(){
         })
       })
     }
-  }
+  }//updating the single bed rooms with booking details
   if (s_rooms.length!=0){
     var s;
     for (s of s_rooms) {
@@ -159,7 +160,7 @@ function confirmBooking(){
       })
     }
   }
-  
+  //function to send the confirmation email
   function sendMail(msg_body,email) {
     Email.send({
     Host: "smtp.gmail.com",
@@ -177,6 +178,7 @@ function confirmBooking(){
   var double = d_rooms.join();
   var single = s_rooms.join();
 
+  //creating the html view of the email body
   var msg1 = '<html><body><div style="box-sizing: border-box; font-family: sans-serif; width: 100%; height:fit-content; background-color: black; padding-top: 20px; padding-bottom: 20px; text-align: center;"><div style="font-size: 17pt; box-sizing: border-box; width: 95%; margin: auto; height:fit-content; background-color:dodgerblue;color: ghostwhite; padding: 15px 15px; ">';
   var msg2 = 'Hotel Pearl - Booking Confirmation</div><div style="box-sizing: border-box; width: 95%; height: fit-content; background-color: white; margin: auto; padding-bottom: 20px;"><table style="box-sizing: border-box; width:95%; height: fit-content; margin: auto; padding-top: 20px; font-size: 13pt; text-align: center;"><tr>';
   var msg3 = '<td style="box-sizing: border-box;background-color:lightslategrey; padding: 10px 10px;">Check-In Date</td><td style="box-sizing: border-box;background-color: lightslategrey; padding: 10px 10px;">'+checkIn+'</td></tr><tr><td style="box-sizing: border-box;background-color: lightslategrey; padding: 10px 10px;">';

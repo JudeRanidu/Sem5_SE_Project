@@ -1,6 +1,7 @@
 const reviewGrid = document.querySelector('#review_grid');
 const overallStar = document.querySelector('#overall_star');
 
+//function to create the view of one review box
 function renderReviews(doc){
     let date = document.createElement('span');
     let name = document.createElement('div');
@@ -40,8 +41,8 @@ function renderReviews(doc){
     reviewGrid.appendChild(reviewBox);
 }
 
-var n_total = 0;
-var revs = 0;
+var n_total = 0; //getting total of stars
+var revs = 0; //getting number of reviews
 
 db.collection('reviews').get().then((snapshot)=>{
     snapshot.docs.forEach(doc => {
@@ -49,11 +50,11 @@ db.collection('reviews').get().then((snapshot)=>{
         n_total = n_total + doc.data().stars;
         revs = revs + 1;
     })
-    let overall_n = Math.round((n_total/revs));
+    let overall_n = Math.round((n_total/revs)); //getting overall star rating
     for(i=1; i<6; i++){
         if(i<=overall_n){
             let star = document.createElement('span');
-            star.setAttribute('class','fa fa-star orange');
+            star.setAttribute('class','fa fa-star orange'); // display it with appropriate colors
             overallStar.append(star);
         }else{
             let star = document.createElement('span');
